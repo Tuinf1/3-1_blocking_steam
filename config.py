@@ -11,7 +11,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent
 
 # Файл состояния блокировки
-STATE_FILE = BASE_DIR / "state.json"
+STATE_FILE = BASE_DIR / "app_state.json"
 
 # Путь к hosts Windows
 HOSTS_PATH = Path(
@@ -37,7 +37,6 @@ STEAM_PROCESSES = [
     "steam.exe",
     "steamwebhelper.exe",
 ]
-
 # Домены Steam для блокировки через hosts
 STEAM_DOMAINS = [
     "store.steampowered.com",

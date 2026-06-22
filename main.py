@@ -1,13 +1,12 @@
 # main.py
+# Точка входа в приложение.
+# Запускает консольное меню блокировщика Steam.
 
-from console_ui import run_console_menu
+from ui.console_ui import run_console_menu
 
 
+# Запускаем приложение
 def main() -> None:
-    """
-    Точка входа в приложение.
-    Запускает консольное меню блокировщика Steam.
-    """
     run_console_menu()
 
 
