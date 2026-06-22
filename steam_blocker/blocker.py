@@ -11,19 +11,33 @@ from steam_blocker.process_manager import close_steam_processes
 from steam_blocker.state_manager import load_state, save_state
 from steam_blocker.timer import is_block_time_expired
 
+_monitor_started = False
 
-def monitor_steam_processes():
+
+def monitor_steam_processes() -> None:
+    """
+    Фоново закрывает Steam, пока активна блокировка.
+
+    Работает тихо, чтобы не мешать консольному меню.
+    """
     while load_state().get("blocked", False):
-        close_steam_processes()
-        time.sleep
+        close_steam_processes(show_message=False)
+        time.sleep(5)
 
-def start_process_monitoring():
+def start_process_monitoring() -> None:
     """
-    Запускает фоновую проверку процессов Steam.
+    Запускает мониторинг Steam один раз.
 
-    daemon=True означает, что поток автоматически завершится,
-    когда пользователь закроет основную программу.
+    Нужен, чтобы при повторном открытии Steam он снова закрывался,
+    но консольное меню при этом не зависало.
     """
+    global _monitor_started
+
+    if _monitor_started:
+        return
+
+    _monitor_started = True
+
     monitor_thread = threading.Thread(
         target=monitor_steam_processes,
         daemon=True

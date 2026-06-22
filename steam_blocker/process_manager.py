@@ -8,6 +8,7 @@
 # - requirements.txt — должен содержать библиотеку psutil
 
 import psutil
+import subprocess
 
 from config import STEAM_PROCESSES
 
@@ -39,27 +40,24 @@ def close_process(process: psutil.Process) -> None:
 
 
 # Закрываем все процессы Steam из списка STEAM_PROCESSES
-def close_steam_processes() -> None:
+def close_steam_processes(show_message: bool = True) -> None:
+    """
+    Закрывает процессы Steam через taskkill.
 
-    # Перебираем все запущенные процессы Windows
-    for process in psutil.process_iter(["name"]):
+    show_message=False используется для фонового мониторинга,
+    чтобы не спамить в консоль каждые 5 секунд.
+    """
+    steam_processes = [
+        "steam.exe",
+        "steamwebhelper.exe",
+    ]
 
-        try:
-            # Получаем имя процесса
-            process_name = process.info["name"]
+    for process_name in steam_processes:
+        result = subprocess.run(
+            ["taskkill", "/F", "/IM", process_name],
+            capture_output=True,
+            text=True
+        )
 
-            # Если имя процесса пустое — пропускаем
-            if not process_name:
-                continue
-
-            # Проверяем, является ли процесс процессом Steam
-            if is_steam_process(process_name):
-                close_process(process)
-
-        except psutil.NoSuchProcess:
-            # Процесс исчез во время проверки
-            pass
-
-        except psutil.AccessDenied:
-            # Нет доступа к процессу
-            pass
+        if show_message and result.returncode == 0:
+            print(f"Процесс {process_name} закрыт.")
