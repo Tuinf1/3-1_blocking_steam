@@ -5,3 +5,5 @@ __pycache__/
 .idea/
 .vscode/
 6_project/
+steam_blocker\__pycache__
+ui\__pycache__

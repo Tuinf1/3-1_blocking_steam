@@ -1,13 +1,34 @@
 # blocker.py
 
 from datetime import datetime, timedelta
-
-from auth import verify_unlock_code
 from config import BLOCK_MINUTES
-from hosts_manager import block_steam_domains, unblock_steam_domains
-from process_manager import close_steam_processes
-from state_manager import load_state, save_state
-from timer import is_block_time_expired
+
+import threading
+import time
+from steam_blocker.auth import verify_unlock_code
+from steam_blocker.hosts_manager import block_steam_domains, unblock_steam_domains
+from steam_blocker.process_manager import close_steam_processes
+from steam_blocker.state_manager import load_state, save_state
+from steam_blocker.timer import is_block_time_expired
+
+
+def monitor_steam_processes():
+    while load_state().get("blocked", False):
+        close_steam_processes()
+        time.sleep
+
+def start_process_monitoring():
+    """
+    Запускает фоновую проверку процессов Steam.
+
+    daemon=True означает, что поток автоматически завершится,
+    когда пользователь закроет основную программу.
+    """
+    monitor_thread = threading.Thread(
+        target=monitor_steam_processes,
+        daemon=True
+    )
+    monitor_thread.start()
 
 
 def block_steam() -> None:
@@ -21,6 +42,7 @@ def block_steam() -> None:
     blocked_until = datetime.now() + timedelta(minutes=BLOCK_MINUTES)
 
     close_steam_processes()
+    start_process_monitoring()
     block_steam_domains()
 
     save_state({
