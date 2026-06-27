@@ -6,7 +6,6 @@ from config import BLOCK_MINUTES
 import threading
 import time
 from steam_blocker.auth import verify_unlock_code
-from steam_blocker.hosts_manager import block_steam_domains, unblock_steam_domains
 from steam_blocker.process_manager import close_steam_processes
 from steam_blocker.state_manager import load_state, save_state
 from steam_blocker.timer import is_block_time_expired
@@ -49,7 +48,7 @@ def block_steam() -> None:
     """
     Блокирует Steam:
     1. Закрывает процессы Steam.
-    2. Добавляет домены Steam в hosts.
+    2. Запускает фоновый мониторинг процессов.
     3. Сохраняет состояние блокировки.
     """
 
@@ -57,8 +56,6 @@ def block_steam() -> None:
 
     close_steam_processes()
     start_process_monitoring()
-    block_steam_domains()
-
     save_state({
         "blocked": True,
         "blocked_until": blocked_until.strftime("%Y-%m-%d %H:%M:%S")
@@ -71,8 +68,6 @@ def unblock_steam() -> None:
     """
     Полностью снимает блокировку Steam.
     """
-
-    unblock_steam_domains()
 
     save_state({
         "blocked": False,

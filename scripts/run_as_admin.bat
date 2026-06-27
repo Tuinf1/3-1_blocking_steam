@@ -2,21 +2,12 @@
 chcp 65001 > nul
 
 :: run_as_admin.bat
-:: Запускает проект Steam Blocker от имени администратора.
-:: Нужен, потому что для изменения Windows hosts требуются права администратора.
+:: Запускает проект Steam Blocker.
 ::
 :: Связан с файлами:
 :: - main.py
 :: - config.py
-:: - steam_blocker/hosts_manager.py
-
-net session >nul 2>&1
-
-if %errorlevel% neq 0 (
-    echo Запрашиваю права администратора...
-    powershell -Command "Start-Process '%~f0' -Verb RunAs"
-    exit /b
-)
+:: - steam_blocker/process_manager.py
 
 cd /d "%~dp0.."
 

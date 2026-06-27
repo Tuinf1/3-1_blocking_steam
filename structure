@@ -24,7 +24,6 @@ steam_blocker/
 │       ├── timer.py
 │       ├── auth.py
 │       ├── process_manager.py
-│       ├── hosts_manager.py
 │       ├── state_manager.py
 │       ├── logger.py
 │       │
